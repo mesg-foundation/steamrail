@@ -14,6 +14,8 @@ contract Executions {
 
   struct Execution {
     uint256 executionId;
+    bytes service;
+    bytes task;
     State state;
     bytes inputs;
     bytes outputs;
@@ -32,16 +34,22 @@ contract Executions {
 
   event Created(
     uint256 indexed executionId,
+    bytes service,
+    bytes task,
     bytes inputs
   );
 
   event Submitted(
     uint256 indexed executionId,
+    bytes service,
+    bytes task,
     bytes outputs
   );
 
   event Verified(
-    uint256 indexed executionId
+    uint256 indexed executionId,
+    bytes service,
+    bytes task
   );
 
   /**
@@ -60,35 +68,41 @@ contract Executions {
    */
 
   function create(
+    bytes calldata service,
+    bytes calldata task,
     bytes calldata inputs
   ) external {
     uint256 executionId = executions.length;
     executions.push(Execution(
       executionId,
+      service,
+      task,
       State.Created,
       inputs,
       "",
       false
     ));
-    emit Created(executionId, inputs);
+    emit Created(executionId, service, task, inputs);
   }
 
   function submit(
     uint256 executionId,
     bytes calldata outputs
   ) external {
-    executions[executionId].outputs = outputs;
-    executions[executionId].state = State.Submitted;
-    emit Submitted(executionId, outputs);
+    Execution storage exec = executions[executionId];
     require(exec.state == State.Created, "Execution is not in created state");
+    exec.outputs = outputs;
+    exec.state = State.Submitted;
+    emit Submitted(executionId, exec.service, exec.task, outputs);
   }
 
   function verify(
     uint256 executionId
   ) external {
-    executions[executionId].verified = true;
-    executions[executionId].state = State.Verified;
-    emit Verified(executionId);
+    Execution storage exec = executions[executionId];
     require(exec.state == State.Submitted, "Execution is not in submitted state");
+    exec.verified = true;
+    exec.state = State.Verified;
+    emit Verified(executionId, exec.service, exec.task);
   }
 }
