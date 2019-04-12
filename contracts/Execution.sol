@@ -138,7 +138,7 @@ contract Executions {
     address[] calldata verifiers,
     uint256 consensus
   ) external {
-    require(verifiers.length < consensus, "Not enough verifiers compared to required consensus");
+    require(verifiers.length >= consensus, "Not enough verifiers compared to required consensus");
     uint256 executionId = executions.length;
     address[] memory emptyAddress;
     executions.push(Execution(
@@ -179,7 +179,7 @@ contract Executions {
     Execution storage exec = executions[executionId];
     require(exec.state == State.Submitted, "Execution is not in submitted state");
     bool allowed = false;
-    for (uint i = 0; i<exec.verifiers.length-1; i++){
+    for (uint i = 0; i < exec.verifiers.length; i++){
       if(exec.verifiers[i] == msg.sender) {
         allowed = true;
         break;
