@@ -68,10 +68,68 @@ contract Executions {
     return executions.length;
   }
 
+  function executionsVerifiersLength(
+    uint256 executionId
+  )
+    external view
+    returns (uint256 length)
+  {
+    return executions[executionId].verifiers.length;
+  }
+
+  function executionsVerifier(
+    uint256 executionId,
+    uint256 index
+  )
+    external view
+    returns (address verifier)
+  {
+    return executions[executionId].verifiers[index];
+  }
+
+  function executionsVerifiersAgreeLength(
+    uint256 executionId
+  )
+    external view
+    returns (uint256 length)
+  {
+    return executions[executionId].verifiersAgree.length;
+  }
+
+  function executionsVerifiesAgree(
+    uint256 executionId,
+    uint256 index
+  )
+    external view
+    returns (address verifier)
+  {
+    return executions[executionId].verifiersAgree[index];
+  }
+
+  function executionsVerifiersDisagreeLength(
+    uint256 executionId
+  )
+    external view
+    returns (uint256 length)
+  {
+    return executions[executionId].verifiersDisagree.length;
+  }
+
+  function executionsVerifierDisagree(
+    uint256 executionId,
+    uint256 index
+  )
+    external view
+    returns (address verifier)
+  {
+    return executions[executionId].verifiersDisagree[index];
+  }
+
   /**
     Functions
    */
 
+  // TODO: get submitter and verifiers addresses from another smart contract
   function create(
     bytes calldata service,
     bytes calldata task,
@@ -100,6 +158,7 @@ contract Executions {
     emit Created(executionId, service, task, inputs);
   }
 
+  // TODO: require a signature from the submitter based on the execution's inputs.
   function submit(
     uint256 executionId,
     bytes calldata outputs
@@ -112,6 +171,7 @@ contract Executions {
     emit Submitted(executionId, exec.service, exec.task, outputs);
   }
 
+  // TODO: require a signature from the verifier based on the execution's outputs and maybe the submitter's address or signature.
   function verify(
     uint256 executionId,
     bool valid
