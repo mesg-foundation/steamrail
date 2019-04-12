@@ -22,7 +22,8 @@ contract Executions {
     bool verified;
     address submitter;
     address[] verifiers;
-    uint256 nbrVerified;
+    uint256 validatedCount;
+    uint256 invalidatedCount;
     uint256 consensus;
   }
 
@@ -92,6 +93,7 @@ contract Executions {
       submitter,
       verifiers,
       0,
+      0,
       consensus
     ));
     emit Created(executionId, service, task, inputs);
@@ -110,7 +112,8 @@ contract Executions {
   }
 
   function verify(
-    uint256 executionId
+    uint256 executionId,
+    bool valid
   ) external {
     Execution storage exec = executions[executionId];
     require(exec.state == State.Submitted, "Execution is not in submitted state");
@@ -122,8 +125,12 @@ contract Executions {
       }
     }
     require(allowed, "Sender is not allowed to verify this execution");
-    exec.nbrVerified = exec.nbrVerified + 1;
-    if (exec.nbrVerified == exec.consensus) {
+    if (valid) {
+      exec.validatedCount = exec.validatedCount + 1;
+    } else {
+      exec.invalidatedCount = exec.invalidatedCount + 1;
+    }
+    if (exec.validatedCount == exec.consensus) {
       exec.verified = true;
       exec.state = State.Verified;
       emit Verified(executionId, exec.service, exec.task);
