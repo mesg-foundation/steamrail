@@ -80,6 +80,7 @@ contract Executions {
     executions[executionId].outputs = outputs;
     executions[executionId].state = State.Submitted;
     emit Submitted(executionId, outputs);
+    require(exec.state == State.Created, "Execution is not in created state");
   }
 
   function verify(
@@ -88,5 +89,6 @@ contract Executions {
     executions[executionId].verified = true;
     executions[executionId].state = State.Verified;
     emit Verified(executionId);
+    require(exec.state == State.Submitted, "Execution is not in submitted state");
   }
 }
