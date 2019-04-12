@@ -20,6 +20,8 @@ contract Executions {
     bytes inputs;
     bytes outputs;
     bool verified;
+    address submitter;
+    address[] verifiers;
   }
 
   /**
@@ -70,7 +72,9 @@ contract Executions {
   function create(
     bytes calldata service,
     bytes calldata task,
-    bytes calldata inputs
+    bytes calldata inputs,
+    address submitter,
+    address[] calldata verifiers
   ) external {
     uint256 executionId = executions.length;
     executions.push(Execution(
@@ -80,7 +84,9 @@ contract Executions {
       State.Created,
       inputs,
       "",
-      false
+      false,
+      submitter,
+      verifiers
     ));
     emit Created(executionId, service, task, inputs);
   }
@@ -91,6 +97,7 @@ contract Executions {
   ) external {
     Execution storage exec = executions[executionId];
     require(exec.state == State.Created, "Execution is not in created state");
+    require(exec.submitter == msg.sender, "Sender is not allowed to submit this execution");
     exec.outputs = outputs;
     exec.state = State.Submitted;
     emit Submitted(executionId, exec.service, exec.task, outputs);
@@ -101,6 +108,14 @@ contract Executions {
   ) external {
     Execution storage exec = executions[executionId];
     require(exec.state == State.Submitted, "Execution is not in submitted state");
+    bool allowed = false;
+    for (uint i = 0; i<exec.verifiers.length-1; i++){
+      if(exec.verifiers[i] == msg.sender) {
+        allowed = true;
+        break;
+      }
+    }
+    require(allowed, "Sender is not allowed to verify this execution");
     exec.verified = true;
     exec.state = State.Verified;
     emit Verified(executionId, exec.service, exec.task);
