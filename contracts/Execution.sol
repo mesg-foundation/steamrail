@@ -22,8 +22,8 @@ contract Executions {
     bool verified;
     address submitter;
     address[] verifiers;
-    uint256 validatedCount;
-    uint256 invalidatedCount;
+    address[] verifiersAgree;
+    address[] verifiersDisagree;
     uint256 consensus;
   }
 
@@ -82,6 +82,7 @@ contract Executions {
   ) external {
     require(verifiers.length < consensus, "Not enough verifiers compared to required consensus");
     uint256 executionId = executions.length;
+    address[] memory emptyAddress;
     executions.push(Execution(
       executionId,
       service,
@@ -92,8 +93,8 @@ contract Executions {
       false,
       submitter,
       verifiers,
-      0,
-      0,
+      emptyAddress,
+      emptyAddress,
       consensus
     ));
     emit Created(executionId, service, task, inputs);
@@ -126,11 +127,11 @@ contract Executions {
     }
     require(allowed, "Sender is not allowed to verify this execution");
     if (valid) {
-      exec.validatedCount = exec.validatedCount + 1;
+      exec.verifiersAgree.push(msg.sender);
     } else {
-      exec.invalidatedCount = exec.invalidatedCount + 1;
+      exec.verifiersDisagree.push(msg.sender);
     }
-    if (exec.validatedCount == exec.consensus) {
+    if (exec.verifiersAgree.length == exec.consensus) {
       exec.verified = true;
       exec.state = State.Verified;
       emit Verified(executionId, exec.service, exec.task);
