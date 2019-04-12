@@ -1,0 +1,16 @@
+{
+  "name": "dexecution",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Anthony Estebe <anthony@mesg.com>",
+  "license": "ISC",
+  "dependencies": {
+    "mesg-js": "^2.0.1",
+    "web3-utils": "^1.0.0-beta.52"
+  }
+}
