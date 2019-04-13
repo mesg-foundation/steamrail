@@ -1,4 +1,5 @@
 pragma solidity >=0.5.0 <0.6.0;
+import "./NodeProvider.sol";
 
 contract Executions {
 
@@ -32,6 +33,7 @@ contract Executions {
    */
 
   Execution[] public executions;
+  NodeProvider public nodeProvider;
 
   /**
     Events
@@ -48,6 +50,14 @@ contract Executions {
   event Verified(
     uint256 indexed executionId
   );
+
+  /**
+    Constructor
+   */
+
+  constructor(NodeProvider _nodeProvider) public {
+    nodeProvider = _nodeProvider;
+  }
 
   /**
     Views
@@ -91,17 +101,24 @@ contract Executions {
     Functions
    */
 
-  // TODO: get submitter and verifiers addresses from another smart contract
   function create(
     uint256 serviceId,
     bytes calldata task,
     bytes calldata inputs,
-    address submitter,
-    address[] calldata verifiers,
+    // address submitter,
+    // address[] calldata verifiers,
+    uint256 nbrValidator,
     uint256 consensus
   ) external {
-    require(verifiers.length >= consensus, "Not enough verifiers compared to required consensus");
+    // require(verifiers.length >= consensus, "not enough verifiers compared to required consensus");
     uint256 executionId = executions.length;
+    address[] memory nodes = nodeProvider.pickNodes(serviceId, nbrValidator + 1);
+
+    address submitter = nodes[0];
+    address[] memory verifiers = new address[](nbrValidator);
+    for(uint256 i = 0; i < nodes.length - 1; i++) {
+      verifiers[i] = nodes[i + 1];
+    }
     address[] memory emptyAddress;
     executions.push(Execution(
       executionId,
@@ -126,8 +143,8 @@ contract Executions {
     bytes calldata outputs
   ) external {
     Execution storage exec = executions[executionId];
-    require(exec.state == State.Created, "Execution is not in created state");
-    require(exec.submitter == msg.sender, "Sender is not allowed to submit this execution");
+    require(exec.state == State.Created, "execution is not in created state");
+    require(exec.submitter == msg.sender, "sender is not allowed to submit this execution");
     exec.outputs = outputs;
     exec.state = State.Submitted;
     emit Submitted(executionId);
@@ -139,7 +156,7 @@ contract Executions {
     bool valid
   ) external {
     Execution storage exec = executions[executionId];
-    require(exec.state == State.Submitted, "Execution is not in submitted state");
+    require(exec.state == State.Submitted, "execution is not in submitted state");
     bool allowed = false;
     for (uint i = 0; i < exec.verifiers.length; i++){
       if(exec.verifiers[i] == msg.sender) {
@@ -147,7 +164,7 @@ contract Executions {
         break;
       }
     }
-    require(allowed, "Sender is not allowed to verify this execution");
+    require(allowed, "sender is not allowed to verify this execution");
     if (valid) {
       exec.verifiersAgree.push(msg.sender);
     } else {
