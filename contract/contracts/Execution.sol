@@ -14,7 +14,7 @@ contract Executions {
 
   struct Execution {
     uint256 executionId;
-    uint256 service;
+    uint256 serviceId;
     bytes task;
     State state;
     bytes inputs;
@@ -38,23 +38,15 @@ contract Executions {
    */
 
   event Created(
-    uint256 indexed executionId,
-    uint256 service,
-    bytes task,
-    bytes inputs
+    uint256 indexed executionId
   );
 
   event Submitted(
-    uint256 indexed executionId,
-    uint256 service,
-    bytes task,
-    bytes outputs
+    uint256 indexed executionId
   );
 
   event Verified(
-    uint256 indexed executionId,
-    uint256 service,
-    bytes task
+    uint256 indexed executionId
   );
 
   /**
@@ -131,7 +123,7 @@ contract Executions {
 
   // TODO: get submitter and verifiers addresses from another smart contract
   function create(
-    uint256 service,
+    uint256 serviceId,
     bytes calldata task,
     bytes calldata inputs,
     address submitter,
@@ -143,7 +135,7 @@ contract Executions {
     address[] memory emptyAddress;
     executions.push(Execution(
       executionId,
-      service,
+      serviceId,
       task,
       State.Created,
       inputs,
@@ -155,7 +147,7 @@ contract Executions {
       emptyAddress,
       consensus
     ));
-    emit Created(executionId, service, task, inputs);
+    emit Created(executionId);
   }
 
   // TODO: require a signature from the submitter based on the execution's inputs.
@@ -168,7 +160,7 @@ contract Executions {
     require(exec.submitter == msg.sender, "Sender is not allowed to submit this execution");
     exec.outputs = outputs;
     exec.state = State.Submitted;
-    emit Submitted(executionId, exec.service, exec.task, outputs);
+    emit Submitted(executionId);
   }
 
   // TODO: require a signature from the verifier based on the execution's outputs and maybe the submitter's address or signature.
@@ -194,7 +186,7 @@ contract Executions {
     if (exec.verifiersAgree.length == exec.consensus) {
       exec.verified = true;
       exec.state = State.Verified;
-      emit Verified(executionId, exec.service, exec.task);
+      emit Verified(executionId);
     }
   }
 }
