@@ -14,7 +14,7 @@ contract Executions {
 
   struct Execution {
     uint256 executionId;
-    bytes service;
+    uint256 service;
     bytes task;
     State state;
     bytes inputs;
@@ -39,21 +39,21 @@ contract Executions {
 
   event Created(
     uint256 indexed executionId,
-    bytes service,
+    uint256 service,
     bytes task,
     bytes inputs
   );
 
   event Submitted(
     uint256 indexed executionId,
-    bytes service,
+    uint256 service,
     bytes task,
     bytes outputs
   );
 
   event Verified(
     uint256 indexed executionId,
-    bytes service,
+    uint256 service,
     bytes task
   );
 
@@ -131,7 +131,7 @@ contract Executions {
 
   // TODO: get submitter and verifiers addresses from another smart contract
   function create(
-    bytes calldata service,
+    uint256 service,
     bytes calldata task,
     bytes calldata inputs,
     address submitter,
