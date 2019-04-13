@@ -34,7 +34,7 @@ contract NodeRegistry {
     Views
    */
 
-  function isNodeRegistered(uint256 serviceId, address node) public view returns (bool) {
+  function isRegistered(uint256 serviceId, address node) public view returns (bool) {
     return serviceIdToNodeToStake[serviceId].contains(node);
   }
 
@@ -51,13 +51,13 @@ contract NodeRegistry {
    */
 
   function register(uint256 serviceId) public payable {
-    require(!serviceIdToNodeToStake[serviceId].contains(msg.sender), "Node is already register for this service");
+    require(!serviceIdToNodeToStake[serviceId].contains(msg.sender), "node is already register for this service");
     serviceIdToNodeToStake[serviceId].insert(msg.sender, msg.value);
     emit Registered(serviceId, msg.sender, msg.value);
   }
 
   function cancel(uint256 serviceId) public {
-    require(serviceIdToNodeToStake[serviceId].contains(msg.sender), "Node is not register for this service");
+    require(serviceIdToNodeToStake[serviceId].contains(msg.sender), "node is not register for this service");
     msg.sender.transfer(serviceIdToNodeToStake[serviceId].get(msg.sender));
     serviceIdToNodeToStake[serviceId].remove(msg.sender);
     // Replace the element to delete and shift elements of the array.
