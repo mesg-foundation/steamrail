@@ -60,61 +60,31 @@ contract Executions {
     return executions.length;
   }
 
-  function executionsVerifiersLength(
+  function executionsVerifiers(
     uint256 executionId
-  )
+  ) 
     external view
-    returns (uint256 length)
+    returns (address[] memory verifiers)
   {
-    return executions[executionId].verifiers.length;
-  }
-
-  function executionsVerifier(
-    uint256 executionId,
-    uint256 index
-  )
-    external view
-    returns (address verifier)
-  {
-    return executions[executionId].verifiers[index];
-  }
-
-  function executionsVerifiersAgreeLength(
-    uint256 executionId
-  )
-    external view
-    returns (uint256 length)
-  {
-    return executions[executionId].verifiersAgree.length;
+    return executions[executionId].verifiers;
   }
 
   function executionsVerifiesAgree(
-    uint256 executionId,
-    uint256 index
-  )
-    external view
-    returns (address verifier)
-  {
-    return executions[executionId].verifiersAgree[index];
-  }
-
-  function executionsVerifiersDisagreeLength(
     uint256 executionId
   )
     external view
-    returns (uint256 length)
+    returns (address[] memory verifiersAgree)
   {
-    return executions[executionId].verifiersDisagree.length;
+    return executions[executionId].verifiersAgree;
   }
 
-  function executionsVerifierDisagree(
-    uint256 executionId,
-    uint256 index
+  function executionsVerifiersDisagree(
+    uint256 executionId
   )
     external view
-    returns (address verifier)
+    returns (address[] memory verifiersDisagree)
   {
-    return executions[executionId].verifiersDisagree[index];
+    return executions[executionId].verifiersDisagree;
   }
 
   /**
