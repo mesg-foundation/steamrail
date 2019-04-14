@@ -12,7 +12,7 @@ contract('NodeProvider', async (accounts) => {
   const other = accounts[1]
   const nodes = accounts.slice(2, 12)
   console.log('nodes', nodes)
-  const sid = 0
+  const sid = '0xfd667a171da5c0d38ef89c6b45950fe3d89d57ee8ef89c6b45950fe3d89d57ee'
 
   before(async () => {
     const nodeRegistry = await NodeRegistry.new({ from: owner })

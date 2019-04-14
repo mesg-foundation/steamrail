@@ -14,7 +14,7 @@ contract('Executions', async (accounts) => {
   const other = accounts[1]
   const nodes = accounts.slice(2, 12)
 
-  const sid = 0
+  const sid = '0xfd667a171da5c0d38ef89c6b45950fe3d89d57ee8ef89c6b45950fe3d89d57ee'
   const task = 'nameOfTask'
   const inputs = JSON.stringify({ a: 2, b: 4 })
   const outputs = JSON.stringify(6)

@@ -15,7 +15,7 @@ contract Executions {
 
   struct Execution {
     uint256 executionId;
-    uint256 serviceId;
+    bytes32 serviceId;
     bytes task;
     State state;
     bytes inputs;
@@ -40,7 +40,7 @@ contract Executions {
 
   event Created(
     uint256 indexed executionId,
-    uint256 indexed serviceId,
+    bytes32 indexed serviceId,
     bytes task,
     bytes inputs,
     address indexed submitter
@@ -48,7 +48,7 @@ contract Executions {
 
   event Executed(
     uint256 indexed executionId,
-    uint256 indexed serviceId,
+    bytes32 indexed serviceId,
     bytes task,
     bytes inputs,
     bytes outputs,
@@ -57,7 +57,7 @@ contract Executions {
 
   event Verified(
     uint256 indexed executionId,
-    uint256 indexed serviceId,
+    bytes32 indexed serviceId,
     bytes task,
     address indexed verifier,
     bool valid
@@ -65,7 +65,7 @@ contract Executions {
 
   event Validated(
     uint256 indexed executionId,
-    uint256 indexed serviceId,
+    bytes32 indexed serviceId,
     bytes task,
     bytes outputs,
     address submitter,
@@ -75,7 +75,7 @@ contract Executions {
 
   event ValidationFailed(
     uint256 indexed executionId,
-    uint256 indexed serviceId,
+    bytes32 indexed serviceId,
     bytes task,
     address submitter,
     address[] verifiersAgree,
@@ -133,7 +133,7 @@ contract Executions {
    */
 
   function create(
-    uint256 serviceId,
+    bytes32 serviceId,
     bytes calldata task,
     bytes calldata inputs,
     // address submitter,

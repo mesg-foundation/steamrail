@@ -21,7 +21,7 @@ contract NodeProvider {
     Functions
    */
 
-  function pickNodes(uint256 serviceId, uint256 nbr) public view returns (address[] memory) {
+  function pickNodes(bytes32 serviceId, uint256 nbr) public view returns (address[] memory) {
     address[] memory nodes = nodeRegistry.nodes(serviceId);
     require(nodes.length >= nbr, "not enough nodes compared to required nbr");
     uint256 nodesLength = nodes.length;
@@ -36,7 +36,7 @@ contract NodeProvider {
     return selectedNodes;
   }
 
-  function verifyNodes(uint256 serviceId, address[] memory nodes) public view returns (bool) {
+  function verifyNodes(bytes32 serviceId, address[] memory nodes) public view returns (bool) {
     for(uint256 i = 0; i < nodes.length; i++) {
       if (!nodeRegistry.isRegistered(serviceId, nodes[i])) {
         return false;

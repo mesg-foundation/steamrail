@@ -11,7 +11,7 @@ contract('NodeRegistry', async (accounts) => {
   const other = accounts[1]
   const node1 = accounts[2]
   const node2 = accounts[3]
-  const sid = 0
+  const sid = '0xfd667a171da5c0d38ef89c6b45950fe3d89d57ee8ef89c6b45950fe3d89d57ee'
 
   before(async () => {
     nodeRegistry = await NodeRegistry.new({ from: owner })
