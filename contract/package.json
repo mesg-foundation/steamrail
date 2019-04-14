@@ -6,6 +6,7 @@
     "truffle": "truffle",
     "compile": "truffle compile",
     "migrate": "truffle migrate --interactive",
+    "ganache-cli": "ganache-cli",
     "lint:sol": "solium -d .",
     "lint:sol:fix": "solium --fix -d .",
     "test": "truffle test",
@@ -28,6 +29,7 @@
     "chai": "^4.2.0",
     "eth-gas-reporter": "^0.1.12",
     "ethlint": "^1.2.2",
+    "ganache-cli": "^6.4.2",
     "truffle-assertions": "^0.7.2",
     "typechain": "^0.3.11"
   },
