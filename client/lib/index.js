@@ -27,7 +27,9 @@ module.exports = (privateKey) => {
       console.log(`Receive event ${name}`)
       try {
         const id = await callback(data)
-        console.log(`Event ${name} processed with ${id}`)
+        if (!id) {
+          console.log(`Event ${name} processed with ${id}`)
+        }
       } catch (e) {
         console.error(e)
       }
@@ -51,7 +53,7 @@ module.exports = (privateKey) => {
     serviceTask,
     EXEC_CREATED,
     async ({ executionId, inputs, submitter }) => {
-      if (submitter !== pubKey) { return } // The client is not the selected executor
+      if (submitter.toLowerCase() !== pubKey.toLowerCase()) { return null } // The client is not the selected executor
       const inputData = JSON.parse(hexToString(inputs))
       const outputs = await callback(inputData)
       return executeMethod(EXEC_SUBMIT_OUTPUTS, [ executionId, stringToHex(JSON.stringify(outputs)) ])
@@ -62,7 +64,7 @@ module.exports = (privateKey) => {
     serviceTask,
     EXEC_EXECUTED,
     async ({ executionId, inputs, outputs, verifiers }) => {
-      if (verifiers.indexOf(pubKey) < 0) { return } // The client is not part of the selected validators
+      if (verifiers.map(x => x.toLowerCase()).indexOf(pubKey.toLowerCase()) < 0) { return null } // The client is not part of the selected validators
       const inputData = JSON.parse(hexToString(inputs))
       const outputData = JSON.parse(hexToString(outputs))
       const verification = await verificationCallback(inputData, outputData)
