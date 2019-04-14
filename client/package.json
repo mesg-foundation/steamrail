@@ -10,7 +10,10 @@
   "author": "Anthony Estebe <anthony@mesg.com>",
   "license": "ISC",
   "dependencies": {
+    "ethers": "^4.0.27",
     "mesg-js": "^2.0.1",
+    "web3": "^1.0.0-beta.52",
+    "web3-eth-accounts": "^1.0.0-beta.52",
     "web3-utils": "^1.0.0-beta.52"
   }
 }

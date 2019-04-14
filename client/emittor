@@ -1,20 +1,23 @@
 #!/usr/local/bin/node
 
 const { stringToHex } = require('web3-utils')
-const { executeMethod } = require('./lib')
+const { executeMethod } = require('./lib')(process.env.PRIVATE_KEY)
 
-const submitter = process.env.ADDRESS
-const verifiers = [
-  process.env.ADDRESS
-]
+if (process.argv.length !== 7) {
+  console.error(`emittor service task "{\\"inputA\\": 42}" 0x 0x,0x,0x`)
+  process.exit(-1)
+}
+
+const service = process.argv[2]
+const task = process.argv[3]
+const inputs = JSON.parse(process.argv[4])
+const submitter = process.argv[5]
+const verifiers = process.argv[6].split(',')
 
 executeMethod('create', [
-  stringToHex('serviceX'),
-  stringToHex('test'),
-  stringToHex(JSON.stringify({
-    a: 10,
-    b: 32
-  })),
+  stringToHex(service),
+  stringToHex(task),
+  stringToHex(JSON.stringify(inputs)),
   submitter,
   verifiers,
   verifiers.length

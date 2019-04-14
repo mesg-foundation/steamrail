@@ -1,7 +1,27 @@
 ```
 mesg-core start
-mesg-core service deploy https://github.com/mesg-foundation/service-ethereum --env PROVIDER_ENDPOINT=https://ropsten.infura.io/v3/xxx
+mesg-core service dev \
+  --env PROVIDER_ENDPOINT=https://ropsten.infura.io/v3/xxx \
+  --env BLOCK_CONFIRMATIONS=2 \
+  --env CONTRACT_ADDRESS=0x77a9de37aB5F4E7e9C9074928ca4A95aBF8e381d \
+  --env CONTRACT_ABI="$(cat ./abi.json | jq .abi)" \
+  https://github.com/mesg-foundation/service-ethereum-contract
+
 echo "export PRIVATE_KEY=0xPRIVATE_KEY" >> .envrc
 source .envrc
-mesg-core service start com.mesg.ethereum
+```
+
+## Emittor
+```
+./emittor serviceX taskX "{\"a\": 42}" 0x 0x,0x,0x
+```
+
+## Executor
+```
+./executor serviceX taskX
+```
+
+## Validator
+```
+./validator serviceX taskX
 ```

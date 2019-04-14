@@ -1,7 +1,15 @@
 #!/usr/local/bin/node
 
-const { execute } = require('./lib')
+const { execute } = require('./lib')(process.env.PRIVATE_KEY)
 
-execute('serviceX', 'test', async inputs => inputs.a + inputs.b)
+if (process.argv.length !== 4) {
+  console.error(`executor service task`)
+  process.exit(-1)
+}
+
+const service = process.argv[2]
+const task = process.argv[3]
+
+execute(service, task, async inputs => inputs.a + inputs.b)
 
 console.log('executor listening...')

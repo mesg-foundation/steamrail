@@ -1,7 +1,15 @@
 #!/usr/local/bin/node
 
-const { verify } = require('./lib')
+const { verify } = require('./lib')(process.env.PRIVATE_KEY)
 
-verify('serviceX', 'test', async (inputs, outputs) => inputs.a + inputs.b === outputs)
+if (process.argv.length !== 4) {
+  console.error(`executor service task`)
+  process.exit(-1)
+}
+
+const service = process.argv[2]
+const task = process.argv[3]
+
+verify(service, task, async (inputs, outputs) => inputs.a + inputs.b === outputs)
 
 console.log('verifier listening...')
