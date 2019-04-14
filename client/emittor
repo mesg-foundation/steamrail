@@ -1,0 +1,23 @@
+#!/usr/local/bin/node
+
+const { stringToHex } = require('web3-utils')
+const { executeMethod } = require('./lib')
+
+const submitter = process.env.ADDRESS
+const verifiers = [
+  process.env.ADDRESS
+]
+
+executeMethod('create', [
+  stringToHex('serviceX'),
+  stringToHex('test'),
+  stringToHex(JSON.stringify({
+    a: 10,
+    b: 32
+  })),
+  submitter,
+  verifiers,
+  verifiers.length
+])
+  .then(console.log)
+  .catch(console.error)

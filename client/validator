@@ -1,0 +1,7 @@
+#!/usr/local/bin/node
+
+const { verify } = require('./lib')
+
+verify('serviceX', 'test', async (inputs, outputs) => inputs.a + inputs.b === outputs)
+
+console.log('verifier listening...')
