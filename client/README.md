@@ -13,15 +13,15 @@ source .envrc
 
 ## Emittor
 ```
-./emittor serviceX taskX "{\"a\": 42}" 0x 0x,0x,0x
+./emittor 0 taskX "{\"a\": 42}" 0x 0x,0x,0x
 ```
 
 ## Executor
 ```
-./executor serviceX taskX
+./executor 0 taskX
 ```
 
 ## Validator
 ```
-./validator serviceX taskX
+./validator 0 taskX
 ```

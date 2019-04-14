@@ -1,9 +1,9 @@
 #!/usr/local/bin/node
 
-const { execute } = require('./lib')(process.env.PRIVATE_KEY)
+const { execute } = require('./lib')(process.argv[4])
 
-if (process.argv.length !== 4) {
-  console.error(`executor service task`)
+if (process.argv.length !== 5) {
+  console.error(`executor service task privatekey`)
   process.exit(-1)
 }
 

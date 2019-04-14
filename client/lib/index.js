@@ -22,7 +22,7 @@ module.exports = (privateKey) => {
     .on('data', async ({ eventData }) => {
       const { name, data } = JSON.parse(eventData)
       if (name !== eventName) { return }
-      if (hexToString(data.serviceId) !== serviceId) { return }
+      if (data.serviceId !== serviceId) { return }
       if (hexToString(data.task) !== serviceTask) { return }
       console.log(`Receive event ${name}`)
       try {
