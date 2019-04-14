@@ -1,15 +1,16 @@
 #!/usr/local/bin/node
 
-const { verify } = require('./lib')(process.argv[4])
+const { execute, verify } = require('./lib')(process.argv[4])
 
 if (process.argv.length !== 5) {
-  console.error(`validator service task privatekey`)
+  console.error(`executor service task privatekey`)
   process.exit(-1)
 }
 
 const service = process.argv[2]
 const task = process.argv[3]
 
+execute(service, task, async inputs => inputs.a + inputs.b)
 verify(service, task, async (inputs, outputs) => inputs.a + inputs.b === outputs)
 
-console.log('verifier listening...')
+console.log('node listening...')
