@@ -1,4 +1,5 @@
 pragma solidity >=0.5.0 <0.6.0;
+import "./NodeProvider.sol";
 
 contract Executions {
 
@@ -14,7 +15,7 @@ contract Executions {
 
   struct Execution {
     uint256 executionId;
-    bytes service;
+    uint256 serviceId;
     bytes task;
     State state;
     bytes inputs;
@@ -32,30 +33,31 @@ contract Executions {
    */
 
   Execution[] public executions;
+  NodeProvider public nodeProvider;
 
   /**
     Events
    */
 
   event Created(
-    uint256 indexed executionId,
-    bytes service,
-    bytes task,
-    bytes inputs
+    uint256 indexed executionId
   );
 
   event Submitted(
-    uint256 indexed executionId,
-    bytes service,
-    bytes task,
-    bytes outputs
+    uint256 indexed executionId
   );
 
   event Verified(
-    uint256 indexed executionId,
-    bytes service,
-    bytes task
+    uint256 indexed executionId
   );
+
+  /**
+    Constructor
+   */
+
+  constructor(NodeProvider _nodeProvider) public {
+    nodeProvider = _nodeProvider;
+  }
 
   /**
     Views
@@ -68,82 +70,59 @@ contract Executions {
     return executions.length;
   }
 
-  function executionsVerifiersLength(
+  function executionsVerifiers(
     uint256 executionId
-  )
+  ) 
     external view
-    returns (uint256 length)
+    returns (address[] memory verifiers)
   {
-    return executions[executionId].verifiers.length;
-  }
-
-  function executionsVerifier(
-    uint256 executionId,
-    uint256 index
-  )
-    external view
-    returns (address verifier)
-  {
-    return executions[executionId].verifiers[index];
-  }
-
-  function executionsVerifiersAgreeLength(
-    uint256 executionId
-  )
-    external view
-    returns (uint256 length)
-  {
-    return executions[executionId].verifiersAgree.length;
+    return executions[executionId].verifiers;
   }
 
   function executionsVerifiesAgree(
-    uint256 executionId,
-    uint256 index
-  )
-    external view
-    returns (address verifier)
-  {
-    return executions[executionId].verifiersAgree[index];
-  }
-
-  function executionsVerifiersDisagreeLength(
     uint256 executionId
   )
     external view
-    returns (uint256 length)
+    returns (address[] memory verifiersAgree)
   {
-    return executions[executionId].verifiersDisagree.length;
+    return executions[executionId].verifiersAgree;
   }
 
-  function executionsVerifierDisagree(
-    uint256 executionId,
-    uint256 index
+  function executionsVerifiersDisagree(
+    uint256 executionId
   )
     external view
-    returns (address verifier)
+    returns (address[] memory verifiersDisagree)
   {
-    return executions[executionId].verifiersDisagree[index];
+    return executions[executionId].verifiersDisagree;
   }
 
   /**
     Functions
    */
 
-  // TODO: get submitter and verifiers addresses from another smart contract
   function create(
-    bytes calldata service,
+    uint256 serviceId,
     bytes calldata task,
     bytes calldata inputs,
-    address submitter,
-    address[] calldata verifiers,
+    // address submitter,
+    // address[] calldata verifiers,
+    uint256 nbrValidator,
     uint256 consensus
   ) external {
-    require(verifiers.length >= consensus, "Not enough verifiers compared to required consensus");
+    // require(verifiers.length >= consensus, "not enough verifiers compared to required consensus");
     uint256 executionId = executions.length;
+    address[] memory nodes = nodeProvider.pickNodes(serviceId, nbrValidator + 1);
+
+    address submitter = nodes[0];
+    address[] memory verifiers = new address[](nbrValidator);
+    for(uint256 i = 0; i < nodes.length - 1; i++) {
+      verifiers[i] = nodes[i + 1];
+    }
     address[] memory emptyAddress;
     executions.push(Execution(
       executionId,
-      service,
+      serviceId,
       task,
       State.Created,
       inputs,
@@ -155,7 +134,7 @@ contract Executions {
       emptyAddress,
       consensus
     ));
-    emit Created(executionId, service, task, inputs);
+    emit Created(executionId);
   }
 
   // TODO: require a signature from the submitter based on the execution's inputs.
@@ -164,11 +143,11 @@ contract Executions {
     bytes calldata outputs
   ) external {
     Execution storage exec = executions[executionId];
-    require(exec.state == State.Created, "Execution is not in created state");
-    require(exec.submitter == msg.sender, "Sender is not allowed to submit this execution");
+    require(exec.state == State.Created, "execution is not in created state");
+    require(exec.submitter == msg.sender, "sender is not allowed to submit this execution");
     exec.outputs = outputs;
     exec.state = State.Submitted;
-    emit Submitted(executionId, exec.service, exec.task, outputs);
+    emit Submitted(executionId);
   }
 
   // TODO: require a signature from the verifier based on the execution's outputs and maybe the submitter's address or signature.
@@ -177,7 +156,7 @@ contract Executions {
     bool valid
   ) external {
     Execution storage exec = executions[executionId];
-    require(exec.state == State.Submitted, "Execution is not in submitted state");
+    require(exec.state == State.Submitted, "execution is not in submitted state");
     bool allowed = false;
     for (uint i = 0; i < exec.verifiers.length; i++){
       if(exec.verifiers[i] == msg.sender) {
@@ -185,7 +164,7 @@ contract Executions {
         break;
       }
     }
-    require(allowed, "Sender is not allowed to verify this execution");
+    require(allowed, "sender is not allowed to verify this execution");
     if (valid) {
       exec.verifiersAgree.push(msg.sender);
     } else {
@@ -194,7 +173,7 @@ contract Executions {
     if (exec.verifiersAgree.length == exec.consensus) {
       exec.verified = true;
       exec.state = State.Verified;
-      emit Verified(executionId, exec.service, exec.task);
+      emit Verified(executionId);
     }
   }
 }

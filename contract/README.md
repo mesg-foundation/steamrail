@@ -1,6 +1,4 @@
-# MESG Algorithmic Token Distribution
-
-Deployed at address [`0x215238ff63bd80dabdfc0c7774b9742a3239e6f4`](https://etherscan.io/address/0x215238ff63bd80dabdfc0c7774b9742a3239e6f4) with token address [`0x420167d87d35c3a249b32ef6225872fbd9ab85d2`](https://etherscan.io/token/0x420167d87d35c3a249b32ef6225872fbd9ab85d2).
+Deployed at address [`0x77a9de37aB5F4E7e9C9074928ca4A95aBF8e381d`](https://etherscan.io/address/0x77a9de37aB5F4E7e9C9074928ca4A95aBF8e381d).
 
 # Develop
 
