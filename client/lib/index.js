@@ -24,10 +24,9 @@ module.exports = (privateKey) => {
       if (name !== eventName) { return }
       if (data.serviceId !== serviceId) { return }
       if (hexToString(data.task) !== serviceTask) { return }
-      console.log(`Receive event ${name}`)
       try {
         const id = await callback(data)
-        if (!id) {
+        if (id) {
           console.log(`Event ${name} processed with ${id}`)
         }
       } catch (e) {
@@ -52,10 +51,17 @@ module.exports = (privateKey) => {
     serviceId,
     serviceTask,
     EXEC_CREATED,
-    async ({ executionId, inputs, submitter }) => {
+    async ({ executionId, inputs, submitter, task, serviceId }) => {
       if (submitter.toLowerCase() !== pubKey.toLowerCase()) { return null } // The client is not the selected executor
       const inputData = JSON.parse(hexToString(inputs))
+
+      console.log('Executing task:')
+      console.log(`\tservice: ${serviceId}`)
+      console.log(`\ttask: ${task}`)
+      console.log(`\tinputs: ${JSON.stringify(inputData)}`)
+
       const outputs = await callback(inputData)
+      console.log(`Submit results`)
       return executeMethod(EXEC_SUBMIT_OUTPUTS, [ executionId, stringToHex(JSON.stringify(outputs)) ])
     })
 
@@ -63,11 +69,19 @@ module.exports = (privateKey) => {
     serviceId,
     serviceTask,
     EXEC_EXECUTED,
-    async ({ executionId, inputs, outputs, verifiers }) => {
+    async ({ executionId, inputs, outputs, verifiers, serviceId, task }) => {
       if (verifiers.map(x => x.toLowerCase()).indexOf(pubKey.toLowerCase()) < 0) { return null } // The client is not part of the selected validators
       const inputData = JSON.parse(hexToString(inputs))
       const outputData = JSON.parse(hexToString(outputs))
+
+      console.log('Verifying task:')
+      console.log(`\tservice: ${serviceId}`)
+      console.log(`\ttask: ${task}`)
+      console.log(`\tinputs: ${JSON.stringify(inputData)}`)
+      console.log(`\toutputs: ${JSON.stringify(outputData)}`)
+
       const verification = await verificationCallback(inputData, outputData)
+      console.log(`Submit verification: ${verification}`)
       return executeMethod(EXEC_SUBMIT_VERIFICATION, [ executionId, verification ])
     })
 
